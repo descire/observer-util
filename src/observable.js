@@ -3,6 +3,9 @@ import { storeObservable } from './store'
 import * as builtIns from './builtIns'
 import baseHandlers from './handlers'
 
+/**
+ * 构建响应式数据
+ */
 export function observable (obj = {}) {
   // if it is already an observable or it should not be wrapped, return it
   if (proxyToRaw.has(obj) || !builtIns.shouldInstrument(obj)) {
