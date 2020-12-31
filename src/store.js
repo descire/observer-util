@@ -7,6 +7,7 @@ export function storeObservable (obj) {
 }
 
 export function registerReactionForOperation (reaction, { target, key, type }) {
+  // 操作序列保存到什么上？
   if (type === 'iterate') {
     key = ITERATION_KEY
   }
@@ -15,7 +16,7 @@ export function registerReactionForOperation (reaction, { target, key, type }) {
   let reactionsForKey = reactionsForObj.get(key)
   if (!reactionsForKey) {
     reactionsForKey = new Set()
-    reactionsForObj.set(key, reactionsForKey)
+    reactionsForObj.set(key, reactionsForKey) // 对象与 reaction 来关联在一起
   }
   // save the fact that the key is used by the reaction during its current run
   if (!reactionsForKey.has(reaction)) {
@@ -50,6 +51,9 @@ function addReactionsForKey (reactionsForKey, reactionsForTarget, key) {
 }
 
 export function releaseReaction (reaction) {
+  /**
+   * 清除依赖项，但是不知道作用是什么？
+   */
   if (reaction.cleaners) {
     reaction.cleaners.forEach(releaseReactionKeyConnection, reaction)
   }

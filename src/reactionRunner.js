@@ -3,11 +3,14 @@ import {
   getReactionsForOperation,
   releaseReaction
 } from './store'
-
+/**
+ * 注册 监听器的 处理逻辑
+ */
 // reactions can call each other and form a call stack
 const reactionStack = []
 let isDebugging = false
 
+// 添加监控函数
 export function runAsReaction (reaction, fn, context, args) {
   // do not build reactive relations, if the reaction is unobserved
   if (reaction.unobserved) {
@@ -16,6 +19,7 @@ export function runAsReaction (reaction, fn, context, args) {
 
   // only run the reaction if it is not already in the reaction stack
   // TODO: improve this to allow explicitly recursive reactions
+  // 避免重复处理
   if (reactionStack.indexOf(reaction) === -1) {
     // release the (obj -> key -> reactions) connections
     // and reset the cleaner connections
@@ -24,6 +28,7 @@ export function runAsReaction (reaction, fn, context, args) {
     try {
       // set the reaction as the currently running one
       // this is required so that we can create (observable.prop -> reaction) pairs in the get trap
+      // 异常处理
       reactionStack.push(reaction)
       return Reflect.apply(fn, context, args)
     } finally {
@@ -35,7 +40,9 @@ export function runAsReaction (reaction, fn, context, args) {
 
 // register the currently running reaction to be queued again on obj.key mutations
 export function registerRunningReactionForOperation (operation) {
-  // get the current reaction from the top of the stack
+  /**
+   * 取出当前的观察者，前置处理
+   */
   const runningReaction = reactionStack[reactionStack.length - 1]
   if (runningReaction) {
     debugOperation(runningReaction, operation)
