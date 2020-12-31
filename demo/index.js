@@ -1,16 +1,3 @@
-const obj = {
-  student: {
-    name: 'xiaoming'
-  },
-  a: {
-    b: {
-      c: {
-        d: 1
-      }
-    }
-  }
-};
-
 function observable(obj) {
   return new Proxy(obj, {
     get: function(target, key, receiver) {
@@ -24,12 +11,13 @@ function observable(obj) {
        * 3、递归的过程中需要判断属性描述器相关的限制
        */
       if (typeof result === 'object' && result !== null) {
-        if (
-          !descriptor ||
-          !(descriptor.writable === false && descriptor.configurable === false)
-        ) {
-          return observable(result);
-        }
+        // if (
+        //   !descriptor ||
+        //   !(descriptor.writable === false && descriptor.configurable === false)
+        // ) {
+        //   return observable(result);
+        // }
+        return observable(result);
       }
       return result;
     },
@@ -60,9 +48,17 @@ function observable(obj) {
   })
 }
 
+const obj = {};
+
+Object.defineProperty(obj, 'student', {
+  value: {
+    name: 'xiaoming',
+    age: 20
+  },
+  writable: false,
+  configurable: false
+})
 
 const o = observable(obj);
 
-const arr = observable([1, 2, 3, 4]);
-
-arr.push(5);
+o.student
